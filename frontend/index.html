@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Store</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 60%; margin: auto; }
+        .product { border: 1px solid #ddd; padding: 10px; margin: 10px; display: inline-block; width: 200px; }
+        button { background-color: green; color: white; padding: 10px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Simple E-Commerce Store</h1>
+    <div class="container" id="productList"></div>
+
+    <h2>Add a Product</h2>
+    <input type="text" id="productName" placeholder="Product Name">
+    <input type="number" id="productPrice" placeholder="Product Price">
+    <button onclick="addProduct()">Add Product</button>
+
+    <script>
+        async function fetchProducts() {
+            let response = await fetch('/products');
+            let products = await response.json();
+            let productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                productList.innerHTML += `<div class="product">
+                    <h3>${product[1]}</h3>
+                    <p>Price: $${product[2]}</p>
+                </div>`;
+            });
+        }
+
+        async function addProduct() {
+            let name = document.getElementById('productName').value;
+            let price = document.getElementById('productPrice').value;
+            await fetch('/add_product', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, price })
+            });
+            fetchProducts();
+        }
+
+        fetchProducts();
+    </script>
+</body>
+</html>
